@@ -20,3 +20,4 @@ rust-project.json
 
 connection_bin
 server_bin
+child_process

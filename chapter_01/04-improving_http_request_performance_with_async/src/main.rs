@@ -1,12 +1,10 @@
-#![allow(dead_code)]
-
 use reqwest as req;
 use reqwest::Error;
 use serde::Deserialize;
-use serde_json;
 use std::time::{Duration, Instant};
 use tokio::time::sleep;
 
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 struct JsonResponse {
   url: String,

@@ -9,5 +9,6 @@ fn main() {
   while let Some(Ok(line)) = lines.next() {
     println!("Received: {}", line);
   }
-  eprintln!("Bye, bye!");
+
+  println!("Bye, bye!");
 }

@@ -1,0 +1,12 @@
+[package]
+name = "passing_tasks_to_different_queues"
+version = "0.1.0"
+edition = "2024"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-task = { workspace = true }
+futures-lite = { workspace = true }
+once_cell = { workspace = true }
+flume = { workspace = true }

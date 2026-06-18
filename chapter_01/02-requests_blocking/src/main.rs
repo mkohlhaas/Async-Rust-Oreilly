@@ -9,7 +9,7 @@ async fn main() -> Result<(), Error> {
   {
     let start_time = Instant::now();
 
-    let _ = reqwest::get(url).await?;
+    let _ = reqwest::get(url).await?; // await blocks!!!
     println!("finished #1");
     let _ = reqwest::get(url).await?;
     println!("finished #2");

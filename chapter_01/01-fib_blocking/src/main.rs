@@ -19,7 +19,7 @@ fn main() {
     handles.push(handle);
   }
 
-  // wait for every thread to be finished (-> blocking)
+  // wait for every thread to finish (-> blocking)
   for handle in handles {
     handle.join().unwrap();
   }

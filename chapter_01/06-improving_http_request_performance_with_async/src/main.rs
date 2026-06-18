@@ -1,0 +1,41 @@
+use reqwest as req;
+use reqwest::Error;
+use serde::Deserialize;
+use std::time::{Duration, Instant};
+use tokio::time::sleep;
+
+#[allow(dead_code)]
+#[derive(Deserialize, Debug)]
+struct JsonResponse {
+  origin: String,
+  url: String,
+  args: serde_json::Value,
+  headers: serde_json::Value,
+}
+
+async fn fetch_data(seconds: u64) -> Result<JsonResponse, Error> {
+  let request_url = format!("https://httpbin.org/delay/{}", seconds);
+  let response = req::get(request_url).await?;
+  let delayed_response = response.json().await?;
+  Ok(delayed_response)
+}
+
+async fn calculate_last_login() {
+  sleep(Duration::from_millis(500)).await;
+  println!("Logged in a long time ago.");
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Error> {
+  let start_time = Instant::now();
+
+  // Futures
+  let data = fetch_data(2);
+  let time_since = calculate_last_login();
+  let (posts, _) = tokio::join!(data, time_since);
+
+  println!("Fetched {:#?}.", posts);
+  println!("Time taken: {:?}.", start_time.elapsed());
+
+  Ok(())
+}

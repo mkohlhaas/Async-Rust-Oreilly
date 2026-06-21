@@ -1,6 +1,7 @@
 use std::future::Future;
 use std::pin::Pin;
 use std::task::{Context, Poll};
+use std::thread::sleep;
 use std::time::Duration;
 
 struct Counter {
@@ -15,7 +16,7 @@ impl Future for Counter {
 
     println!("Polling with result: {}", self.count);
 
-    std::thread::sleep(Duration::from_millis(500));
+    sleep(Duration::from_millis(500));
 
     if self.count < 3 {
       cx.waker().wake_by_ref(); // wake up the task

@@ -4,9 +4,12 @@ use std::sync::{Arc, Mutex};
 use std::task::{Context, Poll, Waker};
 use tokio::sync::mpsc;
 use tokio::task;
+use tokio::time::sleep;
+
+type State = Arc<Mutex<MyFutureState>>;
 
 struct MyFuture {
-  state: Arc<Mutex<MyFutureState>>,
+  state: State,
 }
 
 struct MyFutureState {
@@ -15,7 +18,7 @@ struct MyFutureState {
 }
 
 impl MyFuture {
-  fn new() -> (Self, Arc<Mutex<MyFutureState>>) {
+  fn new() -> (Self, State) {
     let state = Arc::new(Mutex::new(MyFutureState {
       data: None,
       waker: None,
@@ -49,16 +52,17 @@ impl Future for MyFuture {
 #[tokio::main]
 async fn main() {
   let (my_future, state) = MyFuture::new();
-  let (tx, mut rx) = mpsc::channel::<()>(1);
-  let task_handle = task::spawn(my_future);
+  let (sender, mut receiver) = mpsc::channel::<()>(1);
+  let task_handle1 = task::spawn(my_future);
 
-  tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+  sleep(tokio::time::Duration::from_secs(1)).await;
 
   println!("Spawning trigger task...");
-  let trigger_task = task::spawn(async move {
-    rx.recv().await;
+  let _task_handle2 = task::spawn(async move {
+    receiver.recv().await;
     let mut state = state.lock().unwrap();
     state.data = Some(b"Hello from the outside.".to_vec());
+
     loop {
       if let Some(waker) = state.waker.take() {
         waker.wake();
@@ -66,11 +70,13 @@ async fn main() {
       }
     }
   });
-  tx.send(()).await.unwrap();
 
-  let outome = task_handle.await.unwrap();
+  sender.send(()).await.unwrap();
+
+  let outome = task_handle1.await.unwrap();
   println!("Task completed with outcome: {}", outome);
-  trigger_task.await.unwrap();
+
+  // task_handle2.await.unwrap();
 
   println!("Program finished.")
 }

@@ -52,6 +52,6 @@ fn main() {
   // The original `first` is no longer valid; this might invalidate pointers if pinning isn't used.
   moved.print();
 
+  // ⚠️ program doesn't finish
   println!("Program finished.")
 }
-

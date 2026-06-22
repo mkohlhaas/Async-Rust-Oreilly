@@ -32,11 +32,11 @@ where
   task
 }
 
-struct CounterFuture {
+struct Counter {
   count: u32,
 }
 
-impl Future for CounterFuture {
+impl Future for Counter {
   type Output = u32;
 
   fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
@@ -60,12 +60,8 @@ async fn async_fn() {
 }
 
 fn main() {
-  let f1 = CounterFuture {
-    count: Default::default(),
-  };
-  let f2 = CounterFuture {
-    count: Default::default(),
-  };
+  let f1 = Counter { count: 0 };
+  let f2 = Counter { count: 0 };
 
   let t1 = spawn_task(f1);
   let t2 = spawn_task(f2);
